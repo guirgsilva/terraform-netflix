@@ -1,0 +1,72 @@
+#!/bin/bash
+set -e
+
+# Atualizar pacotes
+sudo apt-get update
+sudo apt-get upgrade -y
+
+# Instalar Docker
+sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install -y docker-ce
+sudo usermod -aG docker ubuntu
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# Configurar permissões do Docker
+sudo chmod 666 /var/run/docker.sock
+
+# Reiniciar o serviço Docker para aplicar as mudanças
+sudo systemctl restart docker
+
+# Esperar um pouco para o Docker reiniciar
+sleep 10
+
+# Instalar Java
+sudo apt-get install -y openjdk-11-jdk
+
+# Instalar Jenkins
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y jenkins
+
+# Iniciar e habilitar Jenkins
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+
+# Esperar Jenkins iniciar
+echo "Aguardando Jenkins iniciar..."
+while ! sudo systemctl is-active --quiet jenkins; do
+    sleep 5
+done
+echo "Jenkins está ativo"
+
+# Imprimir a senha inicial do Jenkins
+echo "Senha inicial do Jenkins:"
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+# Criar container para SonarQube
+sudo docker run -d --name sonarqube -p 9000:9000 -p 9092:9092 sonarqube:lts
+
+# Instalar Trivy
+sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update
+sudo apt-get install -y trivy
+
+# Criar um script para executar o Trivy periodicamente e salvar os resultados
+echo '#!/bin/bash
+trivy filesystem --format json --output /var/trivy/results.json /' | sudo tee /usr/local/bin/run-trivy.sh
+sudo chmod +x /usr/local/bin/run-trivy.sh
+
+# Configurar cron job para executar o Trivy diariamente
+(crontab -l 2>/dev/null; echo "0 0 * * * /usr/local/bin/run-trivy.sh") | crontab -
+
+echo "Script de configuração concluído"
