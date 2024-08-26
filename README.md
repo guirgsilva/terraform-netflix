@@ -1,89 +1,89 @@
-# DevSecOps Project: Netflix Clone com Jenkins, Docker e AWS
+# DevSecOps Project: Netflix Clone with Jenkins, Docker, and AWS
 
-Este projeto implementa um pipeline DevSecOps para um clone do Netflix, utilizando Jenkins, Docker, SonarQube, Trivy e AWS.
+This project implements a DevSecOps pipeline for a Netflix clone, utilizing Jenkins, Docker, SonarQube, Trivy, and AWS.
 
-## Visão Geral
+## Overview
 
-Este projeto demonstra a implementação de práticas DevSecOps em um ambiente de clone do Netflix. Ele inclui:
+This project demonstrates the implementation of DevSecOps practices in a Netflix clone environment. It includes:
 
-- Infraestrutura como código usando Terraform
-- Pipeline de CI/CD com Jenkins
-- Containerização com Docker
-- Análise de código estático com SonarQube
-- Varredura de vulnerabilidades com Trivy
-- Monitoramento com Prometheus e Grafana
+- Infrastructure as Code using Terraform
+- CI/CD pipeline with Jenkins
+- Containerization with Docker
+- Static code analysis with SonarQube
+- Vulnerability scanning with Trivy
+- Monitoring with Prometheus and Grafana
 
-## Pré-requisitos
+## Prerequisites
 
-- Conta AWS
-- Terraform instalado
-- Git instalado
+- AWS Account
+- Terraform installed
+- Git installed
 
-## Configuração
+## Setup
 
-1. Clone este repositório:
+1. Clone this repository:
    ```
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   cd seu-repositorio
+   git clone https://github.com/guirgsilva/terraform-netflix.git
+   cd terraform-netflix
    ```
 
-2. Configure suas credenciais AWS:
+2. Configure your AWS credentials:
    ```
    aws configure
    ```
 
-3. Inicialize o Terraform:
+3. Initialize Terraform:
    ```
    terraform init
    ```
 
-4. Aplique a configuração do Terraform:
+4. Apply the Terraform configuration:
    ```
    terraform apply
    ```
 
-## Componentes
+## Components
 
-- **EC2 Instances**: Hospedam Jenkins, Docker, SonarQube e o aplicativo Netflix Clone.
-- **Jenkins**: Gerencia o pipeline de CI/CD.
-- **Docker**: Utilizado para containerização do aplicativo.
-- **SonarQube**: Realiza análise de código estático.
-- **Trivy**: Executa varreduras de vulnerabilidades.
-- **Prometheus & Grafana**: Fornecem monitoramento e visualização.
+- **EC2 Instances**: Host Jenkins, Docker, SonarQube, and the Netflix Clone application.
+- **Jenkins**: Manages the CI/CD pipeline.
+- **Docker**: Used for application containerization.
+- **SonarQube**: Performs static code analysis.
+- **Trivy**: Executes vulnerability scans.
+- **Prometheus & Grafana**: Provide monitoring and visualization.
 
-## Uso
+## Usage
 
-Após a implantação bem-sucedida:
+After successful deployment:
 
-1. Acesse Jenkins: `http://<jenkins-ec2-ip>:8080`
-2. Acesse SonarQube: `http://<sonarqube-ec2-ip>:9000`
-3. Acesse o Netflix Clone: `http://<app-ec2-ip>:8081`
-4. Acesse Grafana: `http://<grafana-ec2-ip>:3000`
+1. Access Jenkins: `http://<jenkins-ec2-ip>:8080`
+2. Access SonarQube: `http://<sonarqube-ec2-ip>:9000`
+3. Access Netflix Clone: `http://<app-ec2-ip>:8081`
+4. Access Grafana: `http://<grafana-ec2-ip>:3000`
 
 ## Pipeline
 
-O pipeline Jenkins inclui as seguintes etapas:
-1. Checkout do código
-2. Construção do aplicativo
-3. Análise de código com SonarQube
-4. Varredura de vulnerabilidades com Trivy
-5. Construção e push da imagem Docker
-6. Implantação no ambiente de produção
+The Jenkins pipeline includes the following stages:
+1. Code checkout
+2. Application build
+3. Code analysis with SonarQube
+4. Vulnerability scanning with Trivy
+5. Docker image build and push
+6. Deployment to production environment
 
-## Segurança
+## Security
 
-- SonarQube realiza análises de código estático para identificar problemas de qualidade e segurança.
-- Trivy executa varreduras de vulnerabilidades em imagens Docker.
-- As práticas de segurança são integradas em todo o pipeline de CI/CD.
+- SonarQube performs static code analysis to identify quality and security issues.
+- Trivy executes vulnerability scans on Docker images.
+- Security practices are integrated throughout the CI/CD pipeline.
 
-## Monitoramento
+## Monitoring
 
-Prometheus e Grafana são utilizados para monitorar o desempenho e a saúde da aplicação e da infraestrutura.
+Prometheus and Grafana are used to monitor the application and infrastructure performance and health.
 
-## Contribuindo
+## Contributing
 
-Contribuições são bem-vindas! Por favor, leia as diretrizes de contribuição antes de submeter pull requests.
+Contributions are welcome! Please read the contribution guidelines before submitting pull requests.
 
-## Licença
+## License
 
-Este projeto está licenciado sob a [Inserir sua licença aqui, por exemplo, MIT License].
+This project is licensed under the [Insert your license here, e.g., MIT License].
