@@ -20,7 +20,7 @@ variable "availability_zone" {
 
 variable "instance_type" {
   description = "EC2 instance type"
-  default     = "t2.micro"
+  default     = "t2.large"
 }
 
 variable "ami_id" {

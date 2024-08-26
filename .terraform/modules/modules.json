@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"ec2","Source":"./modules/ec2","Dir":"modules/ec2"},{"Key":"elastic_ip","Source":"./modules/elastic_ip","Dir":"modules/elastic_ip"},{"Key":"vpc","Source":"./modules/vpc","Dir":"modules/vpc"}]}
