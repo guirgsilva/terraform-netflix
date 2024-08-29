@@ -12,6 +12,7 @@ resource "aws_subnet" "public_subnet" {
   vpc_id            = aws_vpc.netflix_vpc.id
   cidr_block        = var.public_subnet_cidr
   availability_zone = var.availability_zone
+  map_public_ip_on_launch = true 
 
   tags = {
     Name = "netflix-public-subnet"
@@ -81,14 +82,6 @@ resource "aws_security_group" "netflix_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-   ingress {
-    description = "Netflix"
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   ingress {
     description = "Grafana"
     from_port   = 3000
@@ -104,7 +97,13 @@ resource "aws_security_group" "netflix_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+   ingress {
+    description = "Netflix"
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
     from_port   = 0
     to_port     = 0

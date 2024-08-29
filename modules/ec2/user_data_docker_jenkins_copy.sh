@@ -16,27 +16,13 @@ check_installation() {
     fi
 }
 
-# Função para iniciar e verificar container
-start_and_check_container() {
-    container_name=$1
-    log "Iniciando container $container_name..."
-    docker start $container_name || docker run -d --name $container_name $2
-    sleep 10  # Espera 10 segundos para o container inicializar
-    if [ "$(docker ps -q -f name=$container_name)" ]; then
-        log "Container $container_name está rodando."
-    else
-        log "Erro: Container $container_name não está rodando."
-        exit 1
-    fi
-}
-
 # Atualizar pacotes
 log "Atualizando pacotes..."
 sudo apt-get update && sudo apt-get upgrade -y
 
-# Verificar se o repositório já foi clonado
+# Clonar o repositório
+log "Clonando o repositório..."
 if [ ! -d "DevSecOps-Project" ]; then
-    log "Clonando o repositório..."
     git clone https://github.com/N4si/DevSecOps-Project.git
     if [ $? -ne 0 ]; then
         log "Erro ao clonar o repositório. Verifique a conexão com a internet e as permissões."
@@ -53,15 +39,20 @@ newgrp docker
 sudo chmod 777 /var/run/docker.sock
 check_installation docker
 
-# Construir a aplicação Netflix
+# Construir e executar a aplicação Netflix
 log "Construindo a aplicação Netflix... (Isso pode demorar alguns minutos)"
-docker build --build-arg TMDB_V3_API_KEY=69f97abb81b78cb1ed303b9ff3187fec -t netflix .
+docker build --build-arg TMDB_V3_API_KEY=69f97abb81b78cb1ed303b9ff3187fec -t netflix . &
+build_pid=$!
 
-# Iniciar e verificar o container Netflix
-start_and_check_container "netflix" "netflix:latest -p 8081:80"
-
-# Iniciar e verificar o container SonarQube
-start_and_check_container "sonarqube" "sonarqube:lts-community -p 9000:9000 -p 9092:9092"
+# Instalar SonarQube
+log "Instalando SonarQube..."
+docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
+log "Aguardando SonarQube iniciar... (Isso pode levar alguns minutos)"
+until $(curl --output /dev/null --silent --head --fail http://localhost:9000); do
+    printf '.'
+    sleep 5
+done
+log "SonarQube está rodando."
 
 # Instalar Trivy
 log "Instalando Trivy..."
@@ -92,5 +83,17 @@ sudo systemctl enable jenkins
 # Imprimir a senha inicial do Jenkins
 log "Senha inicial do Jenkins:"
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+# Aguardar a construção do Netflix terminar
+log "Aguardando a construção do Netflix terminar..."
+wait $build_pid
+if [ $? -ne 0 ]; then
+    log "Erro na construção do container Netflix."
+    exit 1
+fi
+
+# Executar o container Netflix
+log "Executando o container Netflix..."
+docker run -d --name netflix -p 8081:80 netflix:latest
 
 log "Script de configuração concluído com sucesso"

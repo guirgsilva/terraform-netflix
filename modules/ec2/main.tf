@@ -9,6 +9,11 @@ resource "aws_instance" "netflix_ec2_docker_jenkins" {
 
   user_data = file("${path.module}/user_data_docker_jenkins.sh")
 
+  root_block_device {
+    volume_size = 25
+    volume_type = "gp3"
+  }
+
   tags = {
     Name = "netflix-ec2-docker-jenkins"
   }
@@ -24,6 +29,11 @@ resource "aws_instance" "netflix_ec2_grafana_prometheus" {
   associate_public_ip_address = true
 
   user_data = file("${path.module}/user_data_grafana_prometheus.sh")
+
+  root_block_device {
+    volume_size = 25
+    volume_type = "gp3"
+  }
 
   tags = {
     Name = "netflix-ec2-grafana-prometheus"

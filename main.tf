@@ -22,7 +22,7 @@ module "ec2" {
 }
 
 module "elastic_ip" {
-  source                        = "./modules/elastic_ip"
+  source = "./modules/elastic_ip"
   docker_jenkins_instance_id    = module.ec2.docker_jenkins_instance_id
   grafana_prometheus_instance_id = module.ec2.grafana_prometheus_instance_id
 }
