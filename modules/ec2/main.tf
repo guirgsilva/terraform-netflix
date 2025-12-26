@@ -14,6 +14,10 @@ resource "aws_instance" "netflix_ec2_docker_jenkins" {
     volume_type = "gp3"
   }
 
+  metadata_options {
+    http_tokens = "required"
+  }
+
   tags = {
     Name = "netflix-ec2-docker-jenkins"
   }
@@ -33,6 +37,10 @@ resource "aws_instance" "netflix_ec2_grafana_prometheus" {
   root_block_device {
     volume_size = 25
     volume_type = "gp3"
+  }
+
+  metadata_options {
+    http_tokens = "required"
   }
 
   tags = {
